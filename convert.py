@@ -48,11 +48,9 @@ ICON_DEF = [
 #   IconDef(  90, 100, evdev.ecodes.KEY_2),      # L2
     IconDef( 135, 310, evdev.ecodes.KEY_1),      # L1
     IconDef( 250, 490, evdev.ecodes.KEY_LEFT),   # ←
-
     IconDef( 430, 610, evdev.ecodes.KEY_DOWN),   # ↓
     IconDef( 640, 650, evdev.ecodes.KEY_RIGHT),  # →
     IconDef( 850, 610, evdev.ecodes.KEY_X),      # ×
-
     IconDef(1030, 490, evdev.ecodes.KEY_C),      # ○
     IconDef(1145, 310, evdev.ecodes.KEY_4),      # R1
 #   IconDef(1190, 100, evdev.ecodes.KEY_3),      # R2
@@ -71,8 +69,8 @@ KEY_MAPPING = [
     KeyMapping(evdev.ecodes.KEY_DOWN,   DEV_OUTPUT_KEY,    0x1F),  # ↓ 2
     KeyMapping(evdev.ecodes.KEY_UP,     DEV_OUTPUT_KEY,    0x3A),  # ↑ F1
     KeyMapping(evdev.ecodes.KEY_1,      DEV_OUTPUT_KEY,    0x14),  # L1 Q
-    KeyMapping(evdev.ecodes.KEY_2,      DEV_OUTPUT_MOUSE,  0x02),  # L2 Right click
-    KeyMapping(evdev.ecodes.KEY_3,      DEV_OUTPUT_MOUSE,  0x01),  # R2 Left click
+#   KeyMapping(evdev.ecodes.KEY_2,      DEV_OUTPUT_MOUSE,  0x02),  # L2 Right click
+#   KeyMapping(evdev.ecodes.KEY_3,      DEV_OUTPUT_MOUSE,  0x01),  # R2 Left click
     KeyMapping(evdev.ecodes.KEY_4,      DEV_OUTPUT_KEY,    0x08),  # R1 E
     KeyMapping(evdev.ecodes.KEY_O,      DEV_OUTPUT_KEY,    0x2B),  # OP Tab
     KeyMapping(evdev.ecodes.KEY_P,      DEV_OUTPUT_KEY,    0x29),  # PS Esc
