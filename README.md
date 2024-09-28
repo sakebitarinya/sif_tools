@@ -1,1 +1,1 @@
-スクフェスAC わいわい！Home Meeting!!用のツールです。
+https://note.com/sakebitarinya/n/nae4fa5c816d8
