@@ -72,7 +72,8 @@ KEY_MAPPING = [
     KeyMapping(evdev.ecodes.KEY_P,      0x29),  # PS Esc
 ]
 
-key_buf     = [0, 0, 0, 0, 0, 0]
+key_buf = [0, 0, 0, 0, 0, 0]
+w_fd = open(DEV_OUTPUT_KEY, 'rb+')
 
 def main():
     logger = logging.getLogger(__name__)
@@ -174,8 +175,8 @@ def write_dev(key, value):
     logger.info('{0} {1}'.format(DEV_OUTPUT_KEY, key_buf))
 
     try:
-        with open(DEV_OUTPUT_KEY, 'rb+') as fd:
-            fd.write(bytes([0, 0] + key_buf))
+        w_fd.write(bytes([0, 0] + key_buf))
+        w_fd.flush()
     except FileNotFoundError as e:
         logger.debug(e)
 
