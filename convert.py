@@ -13,9 +13,8 @@ class IconDef:
         self.key    = key
 
 class KeyMapping:
-    def __init__(self, input, dev, output):
+    def __init__(self, input, output):
         self.input  = input
-        self.dev    = dev
         self.output = output
 
 class TouchInfo:
@@ -28,7 +27,6 @@ class TouchInfo:
 DEV_INPUT_KEY       = '/dev/input/event0'
 DEV_INPUT_TOUCH     = '/dev/input/event8'
 DEV_OUTPUT_KEY      = '/dev/hidg0'
-DEV_OUTPUT_MOUSE    = '/dev/hidg1'
 
 DISP_X      = 1280
 DISP_Y      = 720
@@ -60,24 +58,21 @@ ICON_DEF = [
 ]
 
 KEY_MAPPING = [
-    KeyMapping(evdev.ecodes.KEY_Z,      DEV_OUTPUT_KEY,    0x09),  # □ F
-    KeyMapping(evdev.ecodes.KEY_X,      DEV_OUTPUT_KEY,    0x2C),  # × Space
-    KeyMapping(evdev.ecodes.KEY_C,      DEV_OUTPUT_KEY,    0x06),  # ○ C
-    KeyMapping(evdev.ecodes.KEY_V,      DEV_OUTPUT_KEY,    0x15),  # △ R
-    KeyMapping(evdev.ecodes.KEY_RIGHT,  DEV_OUTPUT_KEY,    0x20),  # → 3
-    KeyMapping(evdev.ecodes.KEY_LEFT,   DEV_OUTPUT_KEY,    0x1E),  # ← 1
-    KeyMapping(evdev.ecodes.KEY_DOWN,   DEV_OUTPUT_KEY,    0x1F),  # ↓ 2
-    KeyMapping(evdev.ecodes.KEY_UP,     DEV_OUTPUT_KEY,    0x3A),  # ↑ F1
-    KeyMapping(evdev.ecodes.KEY_1,      DEV_OUTPUT_KEY,    0x14),  # L1 Q
-#   KeyMapping(evdev.ecodes.KEY_2,      DEV_OUTPUT_MOUSE,  0x02),  # L2 Right click
-#   KeyMapping(evdev.ecodes.KEY_3,      DEV_OUTPUT_MOUSE,  0x01),  # R2 Left click
-    KeyMapping(evdev.ecodes.KEY_4,      DEV_OUTPUT_KEY,    0x08),  # R1 E
-    KeyMapping(evdev.ecodes.KEY_O,      DEV_OUTPUT_KEY,    0x2B),  # OP Tab
-    KeyMapping(evdev.ecodes.KEY_P,      DEV_OUTPUT_KEY,    0x29),  # PS Esc
+    KeyMapping(evdev.ecodes.KEY_Z,      0x09),  # □ F
+    KeyMapping(evdev.ecodes.KEY_X,      0x2C),  # × Space
+    KeyMapping(evdev.ecodes.KEY_C,      0x06),  # ○ C
+    KeyMapping(evdev.ecodes.KEY_V,      0x15),  # △ R
+    KeyMapping(evdev.ecodes.KEY_RIGHT,  0x20),  # → 3
+    KeyMapping(evdev.ecodes.KEY_LEFT,   0x1E),  # ← 1
+    KeyMapping(evdev.ecodes.KEY_DOWN,   0x1F),  # ↓ 2
+    KeyMapping(evdev.ecodes.KEY_UP,     0x3A),  # ↑ F1
+    KeyMapping(evdev.ecodes.KEY_1,      0x14),  # L1 Q
+    KeyMapping(evdev.ecodes.KEY_4,      0x08),  # R1 E
+    KeyMapping(evdev.ecodes.KEY_O,      0x2B),  # OP Tab
+    KeyMapping(evdev.ecodes.KEY_P,      0x29),  # PS Esc
 ]
 
 key_buf     = [0, 0, 0, 0, 0, 0]
-mouse_buf   = [0, 0, 0]
 
 def main():
     logger = logging.getLogger(__name__)
@@ -159,45 +154,30 @@ def write_dev(key, value):
 
     logger = logging.getLogger(__name__)
 
-    if mapping.dev == DEV_OUTPUT_KEY:
-        if value == KEY_DOWN:
-            try:
-                key_buf.index(mapping.output)
-                return
-            except ValueError:
-                try:
-                    i = key_buf.index(0)
-                    key_buf[i] = mapping.output
-                except ValueError:
-                    return
-        else:
-            try:
-                i = key_buf.index(mapping.output)
-                key_buf[i] = 0
-            except ValueError:
-                return
-
-        logger.info('{0} {1}'.format(mapping.dev, key_buf))
-
+    if value == KEY_DOWN:
         try:
-            with open(mapping.dev, 'rb+') as fd:
-                fd.write(bytes([0, 0] + key_buf))
-        except FileNotFoundError as e:
-            logger.debug(e)
-
+            key_buf.index(mapping.output)
+            return
+        except ValueError:
+            try:
+                i = key_buf.index(0)
+                key_buf[i] = mapping.output
+            except ValueError:
+                return
     else:
-        if value == KEY_DOWN:
-            mouse_buf[0] = mouse_buf[0] |  mapping.output
-        else:
-            mouse_buf[0] = mouse_buf[0] & ~mapping.output
-
-        logger.info('{0} {1}'.format(mapping.dev, mouse_buf))
-
         try:
-            with open(mapping.dev, 'rb+') as fd:
-                fd.write(bytes(mouse_buf))
-        except FileNotFoundError as e:
-            logger.debug(e)
+            i = key_buf.index(mapping.output)
+            key_buf[i] = 0
+        except ValueError:
+            return
+
+    logger.info('{0} {1}'.format(DEV_OUTPUT_KEY, key_buf))
+
+    try:
+        with open(DEV_OUTPUT_KEY, 'rb+') as fd:
+            fd.write(bytes([0, 0] + key_buf))
+    except FileNotFoundError as e:
+        logger.debug(e)
 
 if __name__ == '__main__':
     main()
